@@ -33,7 +33,7 @@ async def send_email(email: EmailStr, username: str, host: str):
 
     try:
 
-        token_verification = create_email_token({"sub": email})
+        token_verification = await create_email_token({"sub": email})
 
         message = MessageSchema(
             subject="Confirm your email ",

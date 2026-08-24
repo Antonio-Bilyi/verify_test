@@ -9,6 +9,15 @@ from src.services.send_email import send_email
 
 from libgravatar import Gravatar
 
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+env_path = BASE_DIR / '.env'
+
+load_dotenv(dotenv_path=env_path)
+
 has_handler = Hash()
 
 async def create_user(body: UserModel, background_tasks: BackgroundTasks, request: Request, db: Session) -> User:
@@ -40,7 +49,7 @@ async def create_user(body: UserModel, background_tasks: BackgroundTasks, reques
         avatar=avatar
     )
 
-    background_tasks.add_task(send_email, new_user.email, body.username, request.base_url)
+    background_tasks.add_task(send_email, new_user.email, body.username, os.getenv('APP_BASE_URL'))
 
     db.add(new_user)
 
@@ -153,7 +162,7 @@ async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, r
 
     if user:
 
-        background_tasks.add_task(send_email, user.email, User.email, request.base_url)
+        background_tasks.add_task(send_email, user.email, User.email, os.getenv('APP_BASE_URL'))
 
     return {"message": "Check your email for confirmation."}
 
